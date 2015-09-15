@@ -15,7 +15,7 @@ namespace GagyiBankMVC.Controllers
 
         public TransactionController()
         {
-
+            db = new ApplicationDbContext();
         }  
 
         public TransactionController(IApplicationDbContext dbContext)
@@ -28,6 +28,7 @@ namespace GagyiBankMVC.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public ActionResult Deposit(TransactionModel transaction)
         {
@@ -35,6 +36,7 @@ namespace GagyiBankMVC.Controllers
             {
                 db.Transactions.Add(transaction);
                 db.SaveChanges();
+
                 var service = new CheckingAccountService(db);
                 service.UpdateBalance(transaction.CheckingAccountId);
                 return RedirectToAction("Index", "Home");
@@ -42,4 +44,4 @@ namespace GagyiBankMVC.Controllers
             return View();
         }
     }
-}
+} 
