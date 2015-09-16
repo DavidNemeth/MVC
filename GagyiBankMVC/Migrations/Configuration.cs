@@ -22,10 +22,10 @@ namespace GagyiBankMVC.Migrations
             var userStore = new UserStore<ApplicationUser>(context);
             var userManager = new UserManager<ApplicationUser>(userStore);
 
-            if (!context.Users.Any(t=>t.UserName =="admin@mvcatm.com"))
+            if (!context.Users.Any(u => u.UserName == "admin@mvcatm.com"))
             {
                 var user = new ApplicationUser { UserName = "admin@mvcatm.com", Email = "admin@mvcatm.com" };
-                userManager.Create(user, "passW0rd!");
+                IdentityResult result = userManager.Create(user, "passW0rd!");
 
                 var service = new CheckingAccountService(context);
                 service.CreateCheckingAccount("admin", "user", user.Id, 1000);
@@ -34,19 +34,8 @@ namespace GagyiBankMVC.Migrations
                 context.SaveChanges();
 
                 userManager.AddToRole(user.Id, "Admin");
-            }
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+                context.SaveChanges();
+            }   
         }
     }
 }

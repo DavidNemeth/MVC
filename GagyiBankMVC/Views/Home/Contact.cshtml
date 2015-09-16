@@ -19,10 +19,10 @@
     <h3>@ViewBag.TheMessage</h3>
     <form method="post" id="contactForm">
         <textarea data-bind="value:message, valueUpdate:'input'" name="message" id="message" maxlength="150"></textarea>
-        <input type="submit" value="Send" />
+        <input type="submit" value="Send" />        
     </form>
     <span data-bind="text:charactersRemaining"></span> characters remaining
-    <img style="display:none;" id="progress" src="~/Content/images/progress.gif" />
+    <img style="display:none;" id="progress" src="~/Content/images/loading.gif" height="7%" width="7%"/>
 </div>
 
 @section scripts {

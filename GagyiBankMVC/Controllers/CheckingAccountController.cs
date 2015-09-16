@@ -40,6 +40,13 @@ namespace GagyiBankMVC.Controllers
             return View(db.CheckingAccounts.ToList());
         }
 
+        //GET: Statement
+        public ActionResult Statement(int id)
+        {
+            var checkingAccount = db.CheckingAccounts.Find(id);
+            return View(checkingAccount.Transactions.ToList());
+        }
+
         // GET: CheckingAccount/Create
         public ActionResult Create()
         {

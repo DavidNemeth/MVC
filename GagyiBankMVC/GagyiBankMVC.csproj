@@ -202,7 +202,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Images\header-foreign.jpg" />
-    <Content Include="Content\Images\progress.gif" />
+    <Content Include="Content\Images\loading.gif" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -274,6 +274,7 @@
     <Content Include="Views\CheckingAccount\List.cshtml" />
     <Content Include="Views\Home\_ContactThanks.cshtml" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
+    <Content Include="Views\CheckingAccount\Statement.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
