@@ -23,12 +23,40 @@ namespace GagyiBankMVC.Controllers
             db = dbContext;
         }
 
+        //GET: Transaction/Withdrawal
+        public ActionResult Withdrawal(int checkingAccountId)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Withdrawal(TransactionModel transaction)
+        {
+            var checkingAccount = db.CheckingAccounts.Find(transaction.CheckingAccountId);
+            if (checkingAccount.Balance < transaction.Amount)
+            {
+                ModelState.AddModelError("Amount", "You have insufficient funds!");
+            }
+
+            if (ModelState.IsValid)
+            {
+                transaction.Amount = -transaction.Amount;
+                db.Transactions.Add(transaction);
+                db.SaveChanges();
+
+                var service = new CheckingAccountService(db);
+                service.UpdateBalance(transaction.CheckingAccountId);
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+
         // GET: Transaction/Deposit
         public ActionResult Deposit(int checkingAccountId)
         {
             return View();
         }
-
+        // post deposit
         [HttpPost]
         public ActionResult Deposit(TransactionModel transaction)
         {
