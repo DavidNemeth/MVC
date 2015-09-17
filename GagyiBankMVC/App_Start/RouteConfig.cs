@@ -26,6 +26,18 @@ namespace GagyiBankMVC
            );
 
             routes.MapRoute(
+               name: "Home2",
+               url: "Transaction",
+               defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+           );
+
+            routes.MapRoute(
+               name: "Home3",
+               url: "CheckingAccount",
+               defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+           );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }

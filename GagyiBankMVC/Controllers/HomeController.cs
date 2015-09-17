@@ -29,9 +29,7 @@ namespace GagyiBankMVC.Controllers
 
         // GET /home/about        
         public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
+        {  
             return View();
         }
 
@@ -58,7 +56,7 @@ namespace GagyiBankMVC.Controllers
 
         public ActionResult Serial(string letterCase)
         {
-            var serial = "ASPNETMVC5ATM1";
+            var serial = "V0.2";
             if (letterCase == "lower")
             {
                 return Content(serial.ToLower());
