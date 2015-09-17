@@ -23,6 +23,24 @@ namespace GagyiBankMVC.Controllers
             db = dbContext;
         }
 
+        //GET: quickCash
+        public ActionResult QuickCash(int checkingAccountId, decimal amount)
+        {
+            var sourceCheckingAccount = db.CheckingAccounts.Find(checkingAccountId);
+            var balance = sourceCheckingAccount.Balance;
+            if (balance < amount)
+            {
+                return View("QuickCashInsufficientFunds");
+            }
+            db.Transactions.Add(new TransactionModel { CheckingAccountId = checkingAccountId, Amount = -amount });            
+            db.SaveChanges();
+
+            var service = new CheckingAccountService(db);
+            service.UpdateBalance(checkingAccountId);
+
+            return RedirectToAction("Index", "Home");
+        }
+
         //GET: Transaction/Withdrawal
         public ActionResult Withdrawal(int checkingAccountId)
         {
