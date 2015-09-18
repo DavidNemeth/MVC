@@ -14,6 +14,7 @@ namespace GagyiBankMVC.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
+            AutomaticMigrationDataLossAllowed = true;
             ContextKey = "GagyiBankMVC.Models.ApplicationDbContext";
         }
 

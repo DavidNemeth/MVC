@@ -16,14 +16,33 @@ namespace GagyiBankMVC.Controllers
         public TransactionController()
         {
             db = new ApplicationDbContext();
-        }  
+        }
 
         public TransactionController(IApplicationDbContext dbContext)
         {
             db = dbContext;
         }
 
-        //GET: quickCash
+        public ActionResult Deposit(int checkingAccountId)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Deposit(TransactionModel transaction)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Transactions.Add(transaction);
+                db.SaveChanges();
+
+                var service = new CheckingAccountService(db);
+                service.UpdateBalance(transaction.CheckingAccountId);
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+
         public ActionResult QuickCash(int checkingAccountId, decimal amount)
         {
             var sourceCheckingAccount = db.CheckingAccounts.Find(checkingAccountId);
@@ -32,7 +51,7 @@ namespace GagyiBankMVC.Controllers
             {
                 return View("QuickCashInsufficientFunds");
             }
-            db.Transactions.Add(new TransactionModel { CheckingAccountId = checkingAccountId, Amount = -amount });            
+            db.Transactions.Add(new TransactionModel { CheckingAccountId = checkingAccountId, Amount = -amount });
             db.SaveChanges();
 
             var service = new CheckingAccountService(db);
@@ -41,7 +60,6 @@ namespace GagyiBankMVC.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        //GET: Transaction/Withdrawal
         public ActionResult Withdrawal(int checkingAccountId)
         {
             return View();
@@ -69,25 +87,42 @@ namespace GagyiBankMVC.Controllers
             return View();
         }
 
-        // GET: Transaction/Deposit
-        public ActionResult Deposit(int checkingAccountId)
+        public ActionResult Transfer(int checkingAccountId)
         {
             return View();
         }
-        // post deposit
+
         [HttpPost]
-        public ActionResult Deposit(TransactionModel transaction)
+        public ActionResult Transfer(TransferViewModel transfer)
         {
+            // check for available funds
+            var sourceCheckingAccount = db.CheckingAccounts.Find(transfer.CheckingAccountId);
+            if (sourceCheckingAccount.Balance < transfer.Amount)
+            {
+                ModelState.AddModelError("Amount", "You have insufficient funds!");
+            }
+
+            // check for a valid destination account
+            var destinationCheckingAccount = db.CheckingAccounts.Where(c => c.AccountNumber == transfer.DestinationCheckingAccountNumber).FirstOrDefault();
+            if (destinationCheckingAccount == null)
+            {
+                ModelState.AddModelError("DestinationCheckingAccountNumber", "Invalid destination account number.");
+            }
+
+            // add debit/credit transactions and update account balances
             if (ModelState.IsValid)
             {
-                db.Transactions.Add(transaction);
+                db.Transactions.Add(new TransactionModel { CheckingAccountId = transfer.CheckingAccountId, Amount = -transfer.Amount });
+                db.Transactions.Add(new TransactionModel { CheckingAccountId = destinationCheckingAccount.Id, Amount = transfer.Amount });
                 db.SaveChanges();
 
                 var service = new CheckingAccountService(db);
-                service.UpdateBalance(transaction.CheckingAccountId);
-                return RedirectToAction("Index", "Home");
+                service.UpdateBalance(transfer.CheckingAccountId);
+                service.UpdateBalance(destinationCheckingAccount.Id);
+
+                return PartialView("_TransferSuccess", transfer);
             }
-            return View();
+            return PartialView("_TransferForm");
         }
     }
-} 
+}
